@@ -1,18 +1,16 @@
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
 export default {
-  async function handleRequest(request) {
+  async fetch(request, env) {
     const url = new URL(request.url)
-    let targetURL = new URL('https://generativelanguage.googleapis.com')
-  
+    let targetURL = new URL(env.TARGET_BASE_URL)
+
     targetURL.pathname = url.pathname
     targetURL.search = url.search
-  
+
+    const hasBody = !['GET', 'HEAD'].includes(request.method)
     let newRequest = new Request(targetURL, {
       method: request.method,
       headers: request.headers,
-      body: request.body
+      body: hasBody ? request.body : undefined,
     })
   
     let response = await fetch(newRequest)
